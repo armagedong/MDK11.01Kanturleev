@@ -4,6 +4,7 @@ using QRCoder.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -47,44 +48,42 @@ namespace alga
             string userInput = LoginTextBox.Text.Trim();
             string password = PasswordBox.Password.Trim();
 
-            if (string.IsNullOrEmpty(userInput) || string.IsNullOrEmpty(password))
+            using (var connection = new NpgsqlConnection(connectionString))
             {
-                errorMessage.Text = "Пожалуйста, введите данные для авторизации.";
-                return;
-            }
-
-            try
-            {
-                using (var connection = new NpgsqlConnection(connectionString))
+                connection.Open();
+                // Запрос для поиска пользователя по нику или почте
+                string sql = "SELECT password, nickname FROM users WHERE email = @userInput OR nickname = @userInput";
+                using (var cmd = new NpgsqlCommand(sql, connection))
                 {
-                    connection.Open();
-                    string sql = "SELECT * FROM users WHERE (email = @userInput OR login = @userInput) AND password = @password";
-                    using (var cmd = new NpgsqlCommand(sql, connection))
+                    cmd.Parameters.AddWithValue("@userInput", userInput);
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.AddWithValue("@userInput", userInput);
-                        cmd.Parameters.AddWithValue("@password", password);
-
-                        using (var reader = cmd.ExecuteReader())
+                        if (reader.Read())
                         {
-                            if (reader.Read())
+                            string hashedPasswordFromDb = reader["password"].ToString();
+                            string nickname = reader["nickname"].ToString();
+
+                            // Сверка введенного пароля с хэшированным
+                            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(password, hashedPasswordFromDb);
+
+                            if (isPasswordCorrect)
                             {
-                                string nickname = reader["nickname"].ToString();
                                 MessageBox.Show($"Добро пожаловать, {nickname}!");
+                                // Открытие главного окна приложения
                                 MainWindow mainWindow = new MainWindow();
                                 mainWindow.Show();
-                                this.Close();
                             }
                             else
                             {
-                                errorMessage.Text = "Неверный email/никнейм или пароль.";
+                                MessageBox.Show("Неверный пароль!");
                             }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Пользователь не найден!");
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                errorMessage.Text = "Ошибка при подключении к базе данных: " + ex.Message;
             }
         }
     }

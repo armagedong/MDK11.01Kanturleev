@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace alga.DB
 {
-    internal class DataBase
+    public class DataBase
     {
         public string connectionString = "Host=localhost;Username=postgres;Password=root123;Database=alga_plus";
         public DataTable GetDataFromTable(string tableName)
