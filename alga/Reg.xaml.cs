@@ -21,7 +21,7 @@ namespace alga
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            authorization auth = new authorization();
+            Authorization auth = new Authorization();
             auth.Show();
             Close();
         }

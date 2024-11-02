@@ -21,16 +21,18 @@ namespace alga
     /// <summary>
     /// Логика взаимодействия для authorization.xaml
     /// </summary>
-    public partial class authorization : Window
+    public partial class Authorization : Window
     {
         public string connectionString = "Host=localhost;Username=postgres;Password=root123;Database=alga_plus";
-        public authorization()
+        const int maxAttempts = 3;
+        int loginAttempts = 0;
+        public Authorization()
         {
             InitializeComponent();
             QRCodeGenerator qr = new QRCodeGenerator();
             QRCodeData qrData = qr.CreateQrCode("https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley", QRCodeGenerator.ECCLevel.H);
             XamlQRCode qRCode = new XamlQRCode(qrData);
-            DrawingImage qrCodeAsXaml = qRCode.GetGraphic(3);
+            DrawingImage qrCodeAsXaml = qRCode.GetGraphic(2);
             QRCode.Source = qrCodeAsXaml;
 
 
@@ -60,22 +62,22 @@ namespace alga
                     {
                         if (reader.Read())
                         {
-                            string hashedPasswordFromDb = reader["password"].ToString();
-                            string nickname = reader["nickname"].ToString();
-
-                            // Сверка введенного пароля с хэшированным
+                            string? hashedPasswordFromDb = reader["password"].ToString();
+                            string? nickname = reader["nickname"].ToString();
                             bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(password, hashedPasswordFromDb);
 
                             if (isPasswordCorrect)
                             {
                                 MessageBox.Show($"Добро пожаловать, {nickname}!");
-                                // Открытие главного окна приложения
                                 MainWindow mainWindow = new MainWindow();
                                 mainWindow.Show();
+                                loginAttempts = 0;
+                                this.Close();
                             }
                             else
                             {
                                 MessageBox.Show("Неверный пароль!");
+                                loginAttempts++;
                             }
                         }
                         else
