@@ -31,11 +31,33 @@ namespace alga
             {
                 try
                 {
+                    string sql = "";
+                    switch (selectedTable)
+                    {
+                        case "orders":
+                            sql = $" SELECT \r\n    o.order_id,\r\n\ts.name AS supplier_id,\r\n\te.name AS employee_id,\r\n    o.order_date,\r\n\to.status\r\nFROM \r\n    Orders o\r\nJOIN \r\n    Suppliers s ON o.supplier_id = s.supplier_id\r\njoin\r\n\temployees e On o.employee_id = e.employee_id";
+                            break;
+                        case "crops":
+                            sql = $"Select * from crops";
+                            break;
+                        case "inventory":
+                            sql = $"Select * from inventory";
+                            break;
+                        case "fields":
+                            sql = $"SELECT \r\n    f.field_id,\r\n\tf.location,\r\n\tf.size,\r\n\tf.soil_type,\r\n\tc.name AS crop_id\r\nFROM \r\n    fields f\r\nJOIN \r\n    crops c ON f.crop_id = c.crop_id";
+                            break;
+                        case "harvest":
+                            sql = $"\r\nSELECT \r\n    h.harvest_id,\r\n\tc.name AS crop_id,\r\n\tf.location as fields_id,\r\n\th.harvest_amount,\r\n\th.harvest_date\r\n\t\r\nFROM \r\n    harvest h\r\nJOIN \r\n    crops c ON h.crop_id = c.crop_id\r\njoin \r\n\tfields f on h.field_id = f.field_id";
+                            break;
+                        default:
+                            sql = $"Select * from {selectedTable}";
+                            break;
+                    }
 
                     using (var connection = new NpgsqlConnection(dbHelper.connectionString))
                     {
                         connection.Open();
-                        string sql = $"SELECT * FROM {selectedTable}";
+                        
                         NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(sql, connection);
                         DataTable dataTable = new DataTable();
                         adapter.Fill(dataTable);
