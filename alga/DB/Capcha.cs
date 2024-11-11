@@ -91,7 +91,6 @@ namespace alga.DB
                     float angle = random.Next(-20, 20);
                     g.TranslateTransform(x, height / 2);
                     g.RotateTransform(angle);
-
                     g.DrawString(captchaText[i].ToString(), font, brush, 0, 0, StringFormat.GenericDefault);
                     g.ResetTransform();
                     x += fontSize - 5;

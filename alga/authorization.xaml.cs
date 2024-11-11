@@ -88,5 +88,10 @@ namespace alga
                 }
             }
         }
+
+        private void LoginTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

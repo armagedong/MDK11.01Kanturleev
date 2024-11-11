@@ -5,30 +5,69 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:alga"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Menu>
-        <MenuItem Header="Экспорт">
-            <MenuItem Click="Button_Click" Header="Экспорт PDF"/>
-            <MenuItem Click="ExportCSV_Click" Header="Экспорт CSV"/>
-            <MenuItem Click="ExportExcel_Click" Header="Экспорт Excel"/>
-        </MenuItem>
-        <MenuItem Header="Импорт">
-            <MenuItem Click="ImportExcel_Click" Header="Импорт из Excel"/>
-        </MenuItem>
-        <Grid Background="#24913C">
+        Title="MainWindow" 
+        WindowState="Maximized"
+        Width="1100" Height="700"
+        MinWidth="800" MinHeight="600"
+        ResizeMode="CanResize">
 
-            <ComboBox x:Name="tableComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" 
-          SelectionChanged="TableComboBox_SelectionChanged" Margin="10,23,0,0"/>
+    <Grid Background="#F3F4F6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <!-- Основная область -->
+            <ColumnDefinition Width="1.5*"/>
+            <!-- Боковая панель -->
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Верхняя панель -->
+            <RowDefinition Height="*"/>
+            <!-- Контентная часть -->
+            <RowDefinition Height="Auto"/>
+            <!-- Сообщение об ошибке -->
+        </Grid.RowDefinitions>
 
-            <DataGrid Background="#7AB02C" x:Name="dataGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" VerticalAlignment="Top"
-          Margin="10,50,0,0" Width="600" Height="300" IsReadOnly="False" CanUserAddRows="True" CellEditEnding="DataGrid_CellEditEnding" />
-            <Button Content="Добавить поле" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="620,50,0,0" Width="150" Click="AddField_Click"/>
-            <Button Content="Удалить поле" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="620,100,0,0" Width="150" Click="DeleteField_Click"/>
-            <Button Content="Сохранить изменения" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="620,150,0,0" Width="150" Click="SaveChanges_Click" RenderTransformOrigin="0.5,0.5"/>
-            <Button Content="Выйти" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="620,322,0,0" Width="150" Click="Out_Click"/>
+        <!-- Верхняя панель меню -->
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Background="#24913C" Foreground="White" Height="40">
+            <MenuItem Header="Экспорт">
+                <MenuItem Click="Button_Click" Header="Экспорт PDF"/>
+                <MenuItem Click="ExportCSV_Click" Header="Экспорт CSV"/>
+                <MenuItem Click="ExportExcel_Click" Header="Экспорт Excel"/>
+            </MenuItem>
+            <MenuItem Header="Импорт">
+                <MenuItem Click="ImportExcel_Click" Header="Импорт из Excel"/>
+            </MenuItem>
+        </Menu>
 
-            <TextBlock x:Name="errorMessage" Foreground="Red" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,360,0,0" Width="600" TextWrapping="Wrap"/>
-        </Grid>
-    </Menu>
-    
+        <!-- Основная область с таблицей и выбором -->
+        <Border Grid.Row="1" Grid.Column="0" Background="White" CornerRadius="10" Margin="15" Padding="15"
+                Effect="{DynamicResource MaterialShadow}" BorderBrush="#DADCE0" BorderThickness="1">
+            <StackPanel>
+                <!-- ComboBox для выбора таблицы -->
+                <ComboBox x:Name="tableComboBox" Width="250" Margin="0,0,0,15" 
+                          SelectionChanged="TableComboBox_SelectionChanged" HorizontalAlignment="Left"/>
+
+                <!-- DataGrid для отображения данных -->
+                <DataGrid x:Name="dataGrid" Background="#FFFFFF" AutoGenerateColumns="True" 
+                          IsReadOnly="False" CanUserAddRows="True" CellEditEnding="DataGrid_CellEditEnding"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Боковая панель с кнопками -->
+        <Border Grid.Row="1" Grid.Column="1" Background="White" CornerRadius="10" Margin="15" Padding="15"
+                Effect="{DynamicResource MaterialShadow}" BorderBrush="#DADCE0" BorderThickness="1">
+            <StackPanel VerticalAlignment="Top">
+                <TextBlock Text="Управление" FontSize="16" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+                <Button Content="Добавить поле" Margin="0,5" Height="40" Click="AddField_Click"/>
+                <Button Content="Удалить поле" Margin="0,5" Height="40" Click="DeleteField_Click"/>
+                <Button Content="Сохранить изменения" Margin="0,5" Height="40" Click="SaveChanges_Click"/>
+                <Button Content="Выйти" Background="#5C9900" Foreground="White" Margin="0,20,0,0" Height="40" Click="Out_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Сообщение об ошибке -->
+        <TextBlock x:Name="errorMessage" Grid.Row="2" Grid.ColumnSpan="2" Foreground="Red" FontSize="14"
+                   HorizontalAlignment="Center" Margin="10,10,10,20" TextWrapping="Wrap"/>
+    </Grid>
 </Window>

@@ -17,7 +17,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Image Name="img" Grid.Column="1" Grid.Row="0"/>
+        <Image Name="img" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
         <TextBox x:Name="CaptchaInput" Grid.Row="2" Grid.ColumnSpan="2"/>
         <Button Grid.ColumnSpan="2" Grid.Row="3" Content="Подтвердить" Click="VerifyCaptcha_Click"/>
     </Grid>

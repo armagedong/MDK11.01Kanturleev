@@ -31,11 +31,11 @@ namespace alga
             {
                 try
                 {
-                    string sql = "";
+                    string sql;
                     switch (selectedTable)
                     {
                         case "orders":
-                            sql = $" SELECT \r\n    o.order_id,\r\n\ts.name AS supplier_id,\r\n\te.name AS employee_id,\r\n    o.order_date,\r\n\to.status\r\nFROM \r\n    Orders o\r\nJOIN \r\n    Suppliers s ON o.supplier_id = s.supplier_id\r\njoin\r\n\temployees e On o.employee_id = e.employee_id";
+                            sql = $" SELECT o.order_id,s.name AS supplier_id,e.name AS employee_id,o.order_date,o.status FROM Orders o JOIN Suppliers s ON o.supplier_id = s.supplier_id join employees e On o.employee_id = e.employee_id";
                             break;
                         case "crops":
                             sql = $"Select * from crops";
@@ -44,10 +44,10 @@ namespace alga
                             sql = $"Select * from inventory";
                             break;
                         case "fields":
-                            sql = $"SELECT \r\n    f.field_id,\r\n\tf.location,\r\n\tf.size,\r\n\tf.soil_type,\r\n\tc.name AS crop_id\r\nFROM \r\n    fields f\r\nJOIN \r\n    crops c ON f.crop_id = c.crop_id";
+                            sql = $"SELECT f.field_id, f.location,f.size,f.soil_type,c.name AS crop_id FROM fields f JOIN crops c ON f.crop_id = c.crop_id";
                             break;
                         case "harvest":
-                            sql = $"\r\nSELECT \r\n    h.harvest_id,\r\n\tc.name AS crop_id,\r\n\tf.location as fields_id,\r\n\th.harvest_amount,\r\n\th.harvest_date\r\n\t\r\nFROM \r\n    harvest h\r\nJOIN \r\n    crops c ON h.crop_id = c.crop_id\r\njoin \r\n\tfields f on h.field_id = f.field_id";
+                            sql = $"SELECT h.harvest_id,c.name AS crop_id,f.location as fields_id, h.harvest_amount,h.harvest_date FROM harvest h JOIN crops c ON h.crop_id = c.crop_id join fields f on h.field_id = f.field_id";
                             break;
                         default:
                             sql = $"Select * from {selectedTable}";
@@ -159,9 +159,15 @@ namespace alga
         }
         private void Out_Click(object sender, RoutedEventArgs e)
         {
-            Authorization auth = new Authorization();
-            auth.Show();
-            this.Close();
+            MessageBoxResult messageBoxResult = MessageBox.Show("Вы действительно хотите выйти?", "", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                Authorization auth = new Authorization();
+                auth.Show();
+                this.Close();
+            }
+            
+        
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
