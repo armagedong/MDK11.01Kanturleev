@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Верхняя панель -->
+           
             <RowDefinition Height="*"/>
             <!-- Контентная часть -->
             <RowDefinition Height="Auto"/>
@@ -62,7 +63,10 @@
                 <Button Content="Добавить поле" Margin="0,5" Height="40" Click="AddField_Click"/>
                 <Button Content="Удалить поле" Margin="0,5" Height="40" Click="DeleteField_Click"/>
                 <Button Content="Сохранить изменения" Margin="0,5" Height="40" Click="SaveChanges_Click"/>
+                <Button Content="Загрузить изображение" Foreground="White" Margin="0,20,0,0" Height="40" Click="UploadImageToDatabase"/>
+                <Button Content="Выгрузить изображение" Foreground="White" Margin="0,20,0,0" Height="40" Click="OpenImageListWindow"/>
                 <Button Content="Выйти" Background="#5C9900" Foreground="White" Margin="0,20,0,0" Height="40" Click="Out_Click"/>
+                <Image x:Name="ImageControl" Margin="1"/>
             </StackPanel>
         </Border>
 

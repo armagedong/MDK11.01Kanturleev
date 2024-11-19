@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Excel = Microsoft.Office.Interop.Excel;
 namespace alga
 {
@@ -97,11 +98,61 @@ namespace alga
             catch (Exception ex)
             {
                 errorMessage.Text = "Ошибка при удалении поля: " + ex.Message;
+                
+            }
+        }
+        private void UploadImageToDatabase(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
+                string imageName = Path.GetFileName(filePath);
+
+                byte[] imageData = File.ReadAllBytes(filePath);
+                
+                using (var connection = new NpgsqlConnection(dbHelper.connectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO Image (name, img) VALUES (@name, @img)";
+                    using (var command = new NpgsqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("name", imageName);
+                        command.Parameters.AddWithValue("img", imageData);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("Image uploaded successfully!");
+            }
+        }
+        private void OpenImageListWindow(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ImageListWindow imageListWindow = new ImageListWindow();
+                if (imageListWindow.ShowDialog() == true)
+                {
+                    var selectedImage = imageListWindow.SelectedImage;
+                    if (selectedImage != null)
+                    {
+                        ImageControl.Source = selectedImage;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex);
             }
         }
         private void SaveChanges_Click(object sender, RoutedEventArgs e)
         {
-            string selectedTable = tableComboBox.SelectedItem as string;
+            string? selectedTable = tableComboBox.SelectedItem as string;
 
             if (!string.IsNullOrEmpty(selectedTable))
             {
@@ -169,7 +220,6 @@ namespace alga
             
         
         }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
@@ -188,7 +238,6 @@ namespace alga
             }
 
         }
-
         private void ExportCSV_Click(object sender, RoutedEventArgs e)
         {
             this.dataGrid.SelectAllCells();
@@ -206,7 +255,6 @@ namespace alga
             }
             catch (Exception ex) { MessageBox.Show(ex.ToString()); }
         }
-
         private void ExportExcel_Click(object sender, RoutedEventArgs e)
         {
             Excel.Application excelApp = new Excel.Application();
@@ -229,7 +277,7 @@ namespace alga
                     }
                 }
             }
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            var saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel files (*.xlsx)|*.xlsx",
                 FileName = "DataGridExport.xlsx"
